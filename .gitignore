@@ -39,6 +39,15 @@ modes/_profile.md
 # Secrets (never commit — use .env.example as template)
 .env
 
+# Local clones / other projects that should not ship with this repo
+career-ops/
+portfolio_/
+scratch/
+
+# Runtime / personal outreach state
+data/outreach-queue.json
+data/tailor-state.json
+
 # Generated
 .resolved-prompt-*
 node_modules/

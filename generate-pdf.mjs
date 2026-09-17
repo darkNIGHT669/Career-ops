@@ -305,10 +305,10 @@ export async function renderHtmlToPdf(html, outputPath, opts = {}) {
       format: format,
       printBackground: true,
       margin: {
-        top: '0.6in',
-        right: '0.6in',
-        bottom: '0.6in',
-        left: '0.6in',
+        top: '0.4in',
+        right: '0.4in',
+        bottom: '0.4in',
+        left: '0.4in',
       },
       preferCSSPageSize: false,
     });

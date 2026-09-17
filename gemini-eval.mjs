@@ -32,6 +32,7 @@ import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { execFileSync } from 'child_process';
+import yaml from 'js-yaml';
 
 // ---------------------------------------------------------------------------
 // Bootstrap: load .env before anything else
@@ -242,6 +243,131 @@ const cvContent      = readFile(PATHS.cv,          'cv.md');
 const profileContent = readFile(PATHS.profile,     'modes/_profile.md');
 const profileYml     = readFile(PATHS.profileYml,  'config/profile.yml');
 
+// Parse configurations for formFillKit
+let targetCTC = 'Unknown';
+let noticePeriod = 'Unknown';
+let reasonForChange = 'Unknown';
+let relocation = 'Unknown';
+let visaStatus = 'Unknown';
+
+try {
+  const profileData = yaml.load(profileYml);
+  if (profileData?.compensation?.target_range) {
+    targetCTC = `${profileData.compensation.target_range} (Minimum: ${profileData.compensation.minimum || 'N/A'}, Currency: ${profileData.compensation.currency || 'INR'}) [Estimate]`;
+  }
+  if (profileData?.candidate?.notice_period) {
+    noticePeriod = profileData.candidate.notice_period;
+  } else if (profileData?.cover_letter?.notice_period_days) {
+    noticePeriod = `${profileData.cover_letter.notice_period_days} days`;
+  }
+  if (profileData?.candidate?.reason_for_change) {
+    reasonForChange = profileData.candidate.reason_for_change;
+  } else if (profileData?.narrative?.exit_story) {
+    reasonForChange = profileData.narrative.exit_story;
+  }
+  if (profileData?.compensation?.location_flexibility) {
+    relocation = profileData.compensation.location_flexibility;
+  }
+  if (profileData?.location?.visa_status) {
+    visaStatus = profileData.location.visa_status;
+  }
+} catch (e) {
+  console.warn('Could not parse profile.yml for formFillKit:', e.message);
+}
+
+function calculateExperience(cvText, jdText) {
+  const monthsMap = {
+    jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+    jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
+  };
+  
+  const currentDate = new Date();
+  
+  const electronicsKeywords = ['electronics', 'arduino', 'hardware', 'mechatronics', 'embedded', 'pcb', 'telemetry', 'microcontroller', 'firmware', 'sensor'];
+  const isElectronicsJd = electronicsKeywords.some(kw => jdText.toLowerCase().includes(kw));
+  
+  const parseExperienceBlock = (nameRegex) => {
+    const blockMatch = cvText.match(new RegExp(`### [^\\n]*(?:${nameRegex.source})[\\s\\S]*?(?=###|##|$)`, 'i'));
+    if (!blockMatch) return 0;
+    
+    const dateRegex = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\.?\s+(\d{4})\s*[\u2013\u2014-]\s*(present|\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\.?\s+(\d{4}))/i;
+    const dateMatch = blockMatch[0].match(dateRegex);
+    if (!dateMatch) return 0;
+    
+    const startMonth = monthsMap[dateMatch[1].toLowerCase().substring(0, 3)];
+    const startYear = parseInt(dateMatch[2], 10);
+    
+    let endMonth, endYear;
+    if (dateMatch[3].toLowerCase() === 'present') {
+      endMonth = currentDate.getMonth();
+      endYear = currentDate.getFullYear();
+    } else {
+      const endMatch = dateMatch[3].match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\.?\s+(\d{4})/i);
+      if (endMatch) {
+        endMonth = monthsMap[endMatch[1].toLowerCase().substring(0, 3)];
+        endYear = parseInt(endMatch[2], 10);
+      } else {
+        return 0;
+      }
+    }
+    
+    const diff = (endYear - startYear) * 12 + (endMonth - startMonth) + 1;
+    return diff > 0 ? diff : 0;
+  };
+  
+  const oryxMonths = parseExperienceBlock(/Oryx/);
+  const ivoryMonths = parseExperienceBlock(/Ivory/);
+  const belMonths = parseExperienceBlock(/Bharat Electronics|BEL/);
+  
+  console.log(`\n📊 [Experience Debugger] date range sum calculation:`);
+  console.log(`   - Oryx:  ${oryxMonths} months (Jan 2025 – Present)`);
+  console.log(`   - Ivory: ${ivoryMonths} months (Jun 2022 – Aug 2022)`);
+  console.log(`   - BEL:   ${belMonths} months (Jun 2023 – Aug 2023)`);
+  console.log(`   - Is electronics / hardware target JD? ${isElectronicsJd}`);
+  
+  const formatDuration = (totalMonths) => {
+    const years = Math.floor(totalMonths / 12);
+    const months = totalMonths % 12;
+    let formatted = '';
+    if (years > 0) {
+      formatted += `${years} year${years > 1 ? 's' : ''}`;
+    }
+    if (months > 0) {
+      if (formatted) formatted += ' ';
+      formatted += `${months} month${months > 1 ? 's' : ''}`;
+    }
+    return formatted || '0 months';
+  };
+  
+  const totalMonths = oryxMonths + ivoryMonths + belMonths;
+  const relevantMonths = isElectronicsJd ? totalMonths : (oryxMonths + ivoryMonths);
+  
+  const totalExpText = formatDuration(totalMonths);
+  const relevantExpText = formatDuration(relevantMonths);
+  
+  console.log(`   - Calculated Total Experience:    ${totalExpText}`);
+  console.log(`   - Calculated Relevant Experience: ${relevantExpText}\n`);
+  
+  return {
+    totalExpText,
+    relevantExpText
+  };
+}
+
+const exp = calculateExperience(cvContent, jdText);
+const totalExpText = exp.totalExpText;
+const relevantExpText = exp.relevantExpText;
+
+const candidateInfoForFormFill = `
+Expected Salary: ${targetCTC}
+Notice Period: ${noticePeriod}
+Relocation Preference: ${relocation}
+Visa/Sponsorship Status: ${visaStatus}
+Reason for Change: ${reasonForChange}
+Total Experience: ${totalExpText}
+Relevant Experience: ${relevantExpText}
+`;
+
 // ---------------------------------------------------------------------------
 // Build the system prompt (mirrors the Claude skill router logic)
 // ---------------------------------------------------------------------------
@@ -276,6 +402,11 @@ USER ARCHETYPES & NARRATIVE (_profile.md)
 ${profileContent}
 
 ═══════════════════════════════════════════════════════
+CANDIDATE INFORMATION FOR formFillKit
+═══════════════════════════════════════════════════════
+${candidateInfoForFormFill}
+
+═══════════════════════════════════════════════════════
 IMPORTANT OPERATING RULES FOR THIS CLI SESSION
 ═══════════════════════════════════════════════════════
 1. You do NOT have access to WebSearch, Playwright, or file writing tools.
@@ -283,7 +414,19 @@ IMPORTANT OPERATING RULES FOR THIS CLI SESSION
    - For Block G (Legitimacy): analyze the JD text only; skip URL/page freshness checks.
    - Post-evaluation file saving is handled by the script, not by you.
 2. Generate Blocks A through G in full, in English, unless the JD is in another language.
-3. At the very end, output a machine-readable summary block in this exact format:
+3. Keep markdown tables simple and clean. Use short column-alignment separator rows (like '|---|---|' or '|:---|:---|'). Never repeat hyphens or colons indefinitely, and do not get stuck in formatting loops.
+4. Output a section titled \`## Form Fill Kit (formFillKit)\` immediately before the \`---SCORE_SUMMARY---\` block. Summarize standard screening answers:
+   - **Expected Salary (Estimate):** [Expected Salary from CANDIDATE INFORMATION FOR formFillKit]
+   - **Notice Period:** [Notice Period from CANDIDATE INFORMATION FOR formFillKit]
+   - **Relocation Preference:** [Relocation Preference from CANDIDATE INFORMATION FOR formFillKit]
+   - **Work Mode:** [Deduce the work mode (On-site / Hybrid / Remote) from the target Job Description]
+   - **Total Experience:** [Copy verbatim the value of Total Experience from CANDIDATE INFORMATION FOR formFillKit, do not recalculate]
+   - **Relevant Experience:** [Copy verbatim the value of Relevant Experience from CANDIDATE INFORMATION FOR formFillKit, do not recalculate]
+   - **Visa/Sponsorship:** [Visa/Sponsorship Status from CANDIDATE INFORMATION FOR formFillKit]
+   - **Reason for Change:** [Reason for Change from CANDIDATE INFORMATION FOR formFillKit]
+   - **Company Snapshot:** [Write a 2-3 line concise snapshot of the target company based on the JD]
+   - **Top 5-6 JD Keywords:** [List the top 5-6 core keywords or technical requirements from the JD to sanity check against the resume]
+5. At the very end, output a machine-readable summary block in this exact format:
 
 ---SCORE_SUMMARY---
 COMPANY: <company name or "Unknown">
@@ -303,7 +446,7 @@ const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({
   model: modelName,
   generationConfig: {
-    temperature: 0.4,      // deterministic enough for structured evaluation
+    temperature: 0.1,      // deterministic enough for structured evaluation
     maxOutputTokens: 8192, // full 7-block evaluation
   },
 });
@@ -330,6 +473,9 @@ try {
   validateEvaluationShape(evaluationText);
 } catch (err) {
   console.error('❌  Gemini output failed validation:', err.message);
+  console.error('--- DEBUG: RAW GEMINI OUTPUT ---');
+  console.error(evaluationText);
+  console.error('--------------------------------');
   console.error('    No report was saved. Retry, lower temperature, or use the Claude pipeline for this JD.');
   process.exit(1);
 }

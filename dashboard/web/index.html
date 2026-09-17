@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Career-Ops Web Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f0f1a;
+      --bg-panel: rgba(20, 20, 35, 0.65);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f3f6;
+      --text-muted: #9ba1b0;
+      --primary: hsl(187, 74%, 42%);
+      --primary-hover: hsl(187, 74%, 35%);
+      --accent: hsl(270, 70%, 55%);
+      --accent-glow: rgba(147, 51, 234, 0.35);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --font-stack: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 10% 10%, rgba(187, 74, 32, 0.05) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(270, 70, 45, 0.08) 0px, transparent 50%);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 40px;
+    }
+
+    header {
+      backdrop-filter: blur(12px);
+      background: rgba(15, 15, 26, 0.7);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 40px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-glow {
+      width: 14px;
+      height: 14px;
+      background: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, var(--text-main), var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: var(--font-stack);
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: all 0.25s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .tab-btn.active {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--border-color);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 30px auto 0 auto;
+      padding: 0 20px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARD PANELS */
+    .panel {
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      margin-bottom: 24px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* TRACKER TABLE */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      font-size: 13.5px;
+      padding: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .badge-score {
+      background: rgba(147, 51, 234, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(147, 51, 234, 0.3);
+    }
+
+    .badge-status {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .badge-status.evaluated {
+      background: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-status.applied {
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-status.rejected {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* FORMS & INPUTS */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-family: var(--font-stack);
+      font-size: 14px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 8px rgba(0, 180, 216, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 180px;
+    }
+
+    .btn {
+      background: var(--primary);
+      border: 1px solid var(--primary);
+      color: white;
+      cursor: pointer;
+      font-family: var(--font-stack);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .btn-accent:hover {
+      box-shadow: 0 0 15px var(--accent-glow);
+      opacity: 0.95;
+    }
+
+    /* GRID LAYOUTS */
+    .split-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .split-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* LOADER */
+    .loader {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s infinite linear;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* REPORT VIEWER */
+    .report-view {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px;
+      max-height: 600px;
+      overflow-y: auto;
+      font-size: 13.5px;
+      font-family: 'Liberation Sans', sans-serif;
+    }
+
+    .report-view h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: var(--primary);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 4px;
+    }
+
+    .report-view h2:first-of-type {
+      margin-top: 0;
+    }
+
+    .report-view ul {
+      padding-left: 20px;
+      margin: 10px 0;
+    }
+
+    .report-view li {
+      margin-bottom: 6px;
+    }
+
+    .report-view table {
+      margin: 12px 0;
+    }
+
+    .report-view table th, .report-view table td {
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .report-view tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 13.5px;
+    }
+
+    .alert-info {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+    }
+
+    /* CODE EDITOR */
+    .editor-container {
+      display: flex;
+      flex-direction: column;
+      height: 550px;
+    }
+
+    .editor-container textarea {
+      flex: 1;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      background: #08080f;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="logo-glow"></div>
+      <h1>Career-Ops Web Center</h1>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tracker')">Tracker</button>
+      <button class="tab-btn" onclick="switchTab('evaluate')">Evaluate Job</button>
+      <button class="tab-btn" onclick="switchTab('tailor')">Tailor Resume</button>
+      <button class="tab-btn" onclick="switchTab('outreach')">Cold Outreach</button>
+      <button class="tab-btn" onclick="switchTab('editor')">Edit CV</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- TRACKER TAB -->
+    <div id="tab-tracker" class="tab-content active">
+      <div class="panel">
+        <div class="panel-title">
+          <span>Application Tracker Overview</span>
+          <button class="btn btn-secondary" onclick="loadApplications()">Refresh</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th>Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tracker-body">
+              <tr>
+                <td colspan="8" style="text-align: center; color: var(--text-muted);">Loading applications...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- EVALUATE TAB -->
+    <div id="tab-evaluate" class="tab-content">
+      <div class="split-layout">
+        <div class="panel">
+          <div class="panel-title">New Job Evaluation</div>
+          
+          <div class="form-group">
+            <label for="eval-company">Company Name</label>
+            <input type="text" id="eval-company" placeholder="e.g., SellScale">
+          </div>
+
+          <div class="form-group">
+            <label for="eval-role">Role Title</label>
+            <input type="text" id="eval-role" placeholder="e.g., Full Stack Engineer">
+          </div>
+
+          <div class="form-group">
+            <label for="eval-jd">Job Description Text</label>
+            <textarea id="eval-jd" placeholder="Paste the full job description here..."></textarea>
+          </div>
+
+          <button id="btn-eval" class="btn btn-accent" onclick="startEvaluation()">
+            <span>Run Evaluation</span>
+          </button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Evaluation Report</div>
+          <div id="eval-report-container">
+            <div style="text-align: center; color: var(--text-muted); padding-top: 100px;">
+              Submit a job description on the left to see the match evaluation report and priority score.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAILOR TAB -->
+    <div id="tab-tailor" class="tab-content">
+      <div class="split-layout">
+        <div class="panel">
+          <div class="panel-title">Tailor Resume for Job</div>
+          <div class="alert alert-info">
+            This tool uses your CV and the JD to optimize headers, summary lines, and project ordering. It produces a single-page ATS-compliant resume.
+          </div>
+
+          <div class="form-group">
+            <label for="tailor-jd-source">Choose Job Source</label>
+            <select id="tailor-jd-source" onchange="toggleTailorSource()">
+              <option value="new">Paste New Job Description</option>
+              <option value="recent">Use Last Evaluated Job (SPARK)</option>
+            </select>
+          </div>
+
+          <div id="tailor-new-jd-group">
+            <div class="form-group">
+              <label for="tailor-jd">Job Description</label>
+              <textarea id="tailor-jd" placeholder="Paste target job description to match stack against..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 15px;">
+            <label for="tailor-extra-details">Additional Oryx/Ivory Context (Optional)</label>
+            <textarea id="tailor-extra-details" placeholder="Add specific details or achievements you want to weave into Oryx or Ivory (e.g. details about Docker, Kubernetes, database indexing, etc.)..." style="height: 80px;"></textarea>
+          </div>
+
+          <button id="btn-tailor" class="btn btn-accent" onclick="startTailor()">
+            <span>Generate Tailored Resume PDF</span>
+          </button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">Download Center</div>
+          <div id="tailor-result-container" style="text-align: center; padding-top: 100px; color: var(--text-muted);">
+            Compile the resume on the left to generate the download link.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDITOR TAB -->
+    <div id="tab-editor" class="tab-content">
+      <div class="panel">
+        <div class="panel-title">
+          <span>Edit Canonical CV (cv.md)</span>
+          <button class="btn" onclick="saveCv()">Save Changes</button>
+        </div>
+        <div class="editor-container">
+          <textarea id="cv-editor"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTREACH TAB -->
+    <div id="tab-outreach" class="tab-content">
+      <div class="split-layout">
+        <div class="panel">
+          <div class="panel-title">
+            <span>High-Match Outreach Queue</span>
+            <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; cursor: pointer; font-weight: normal; color: var(--text-muted);">
+              <input type="checkbox" id="show-all-scores" onchange="loadOutreachList()" style="width: auto; height: auto; margin: 0;"> Show all scores (&lt; 4.2)
+            </label>
+          </div>
+          <div class="alert alert-info">
+            Displaying evaluated jobs. Search LinkedIn decision-makers, guess emails locally via DNS MX lookup, draft custom messages via Gemini, and send directly via SMTP.
+          </div>
+          <div class="table-container">
+            <table style="font-size: 12.5px;">
+              <thead>
+                <tr>
+                  <th>Company</th>
+                  <th>Role</th>
+                  <th>Score</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="outreach-body">
+                <tr>
+                  <td colspan="5" style="text-align: center; color: var(--text-muted);">Loading outreach queue...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button class="btn btn-secondary" onclick="startManualOutreach()" style="width: 100%; justify-content: center; margin-top: 16px;">
+            + Create Custom Manual Outreach
+          </button>
+        </div>
+
+        <div class="panel" id="outreach-workspace" style="display: none;">
+          <div class="panel-title">Outreach Workspace: <span id="work-company" style="color: var(--primary);"></span></div>
+          
+          <div class="form-group" id="lead-select-group" style="display: none; margin-bottom: 16px;">
+            <label for="work-lead-select">Select Target Contact</label>
+            <select id="work-lead-select" onchange="changeActiveLead()" style="font-size: 13.5px;"></select>
+          </div>
+          
+          <div id="manual-outreach-fields" style="display: none; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-bottom: 16px;">
+            <div class="form-group">
+              <label for="work-manual-company">Company Name</label>
+              <input type="text" id="work-manual-company" placeholder="e.g. Stripe">
+            </div>
+            <div class="form-group">
+              <label for="work-manual-role">Role Title</label>
+              <input type="text" id="work-manual-role" placeholder="e.g. Backend Engineer">
+            </div>
+            <div class="form-group">
+              <label for="work-manual-jd">Job Description</label>
+              <textarea id="work-manual-jd" placeholder="Paste target Job Description here..." style="min-height: 120px; font-size: 13px;"></textarea>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="work-company-linkedin">Company LinkedIn URL (Optional)</label>
+            <input type="text" id="work-company-linkedin" placeholder="e.g. https://www.linkedin.com/company/stripe/">
+          </div>
+
+          <div class="form-group">
+            <label>Decision Maker Profile</label>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+              <input type="text" id="work-lead-name" placeholder="Name" style="flex: 1.5;">
+              <input type="text" id="work-lead-title" placeholder="Title (e.g. CTO)" style="flex: 2;">
+            </div>
+            <input type="text" id="work-lead-linkedin" placeholder="LinkedIn URL" style="font-size: 12.5px;">
+          </div>
+
+          <div class="form-group">
+            <label for="work-lead-email">Verified Email Address</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <input type="text" id="work-lead-email" placeholder="email@company.com" style="flex: 2;">
+              <select id="work-email-patterns" onchange="useSelectedPattern()" style="flex: 1.5; font-size: 12px; padding: 6px;">
+                <option value="">Pattern Candidates...</option>
+              </select>
+            </div>
+            <div id="work-mx-status" style="font-size: 11.5px; font-weight: 500;"></div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="btn btn-secondary" onclick="findLeadForCurrentJob()" id="btn-find-lead">Find Lead via LinkedIn</button>
+            <button class="btn btn-accent" onclick="draftEmailForCurrentJob()" id="btn-draft-email">Draft Personalised Email</button>
+          </div>
+
+          <div id="outreach-email-editor" style="display: none; border-top: 1px solid var(--border-color); padding-top: 20px;">
+            <div class="form-group">
+              <label for="work-email-subject">Email Subject</label>
+              <input type="text" id="work-email-subject" placeholder="Subject">
+            </div>
+            <div class="form-group">
+              <label for="work-email-body">Email Body (Markdown / Plain Text)</label>
+              <textarea id="work-email-body" style="font-family: monospace; font-size: 12.5px; min-height: 250px;"></textarea>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-accent" onclick="sendOutreachEmail()" id="btn-send-email">Send Email via Gmail</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Tab switching logic
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.textContent.toLowerCase().includes(tabId));
+      if (activeBtn) activeBtn.classList.add('active');
+      
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+
+      if (tabId === 'tracker') {
+        loadApplications();
+      } else if (tabId === 'editor') {
+        loadCv();
+      } else if (tabId === 'outreach') {
+        loadOutreachList();
+      }
+    }
+
+    // Toggle tailor job source inputs
+    function toggleTailorSource() {
+      const source = document.getElementById('tailor-jd-source').value;
+      const group = document.getElementById('tailor-new-jd-group');
+      if (source === 'new') {
+        group.style.display = 'block';
+      } else {
+        group.style.display = 'none';
+      }
+    }
+
+    // Fetch and display applications from API
+    async function loadApplications() {
+      const body = document.getElementById('tracker-body');
+      body.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Refreshing Applications Tracker...</td></tr>`;
+      
+      try {
+        const res = await fetch('/api/applications');
+        const data = await res.json();
+        
+        if (data.length === 0) {
+          body.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">No applications evaluated yet.</td></tr>`;
+          return;
+        }
+
+        body.innerHTML = '';
+        data.forEach(app => {
+          const scoreClass = 'badge badge-score';
+          const statusClass = `badge badge-status ${app.status.toLowerCase()}`;
+          
+          body.innerHTML += `
+            <tr>
+              <td>${app.num}</td>
+              <td>${app.date}</td>
+              <td><strong>${app.company}</strong></td>
+              <td>${app.role}</td>
+              <td><span class="${scoreClass}">${app.score}</span></td>
+              <td><span class="${statusClass}">${app.status}</span></td>
+              <td style="color: var(--text-muted); font-size: 12px;">${app.notes || '—'}</td>
+              <td>
+                <div class="action-row">
+                  <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="loadReport('${app.reportUrl}', '${app.company} — ${app.role}')">View Report</button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--danger);">Error loading tracker: ${err.message}</td></tr>`;
+      }
+    }
+
+    // Load detailed report in tracker view or modal
+    async function loadReport(reportUrl, title) {
+      switchTab('evaluate');
+      const container = document.getElementById('eval-report-container');
+      container.innerHTML = `<div style="text-align: center; padding-top: 100px;"><div class="loader"></div><p style="margin-top: 10px; color: var(--text-muted);">Fetching report...</p></div>`;
+      
+      try {
+        const res = await fetch(`/api/report?url=${encodeURIComponent(reportUrl)}`);
+        const report = await res.json();
+        
+        container.innerHTML = `
+          <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--text-main);">${title}</h3>
+          <div class="report-view">${mdToHtml(report.content)}</div>
+        `;
+      } catch (err) {
+        container.innerHTML = `<div style="color: var(--danger); padding: 20px;">Error loading report: ${err.message}</div>`;
+      }
+    }
+
+    // Start JD evaluation
+    async function startEvaluation() {
+      const company = document.getElementById('eval-company').value.trim();
+      const role = document.getElementById('eval-role').value.trim();
+      const jd = document.getElementById('eval-jd').value.trim();
+      const btn = document.getElementById('btn-eval');
+      
+      if (!company || !role || !jd) {
+        alert('Please fill in Company Name, Role Title, and Job Description text.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<div class="loader"></div> <span>Evaluating...</span>`;
+      
+      const container = document.getElementById('eval-report-container');
+      container.innerHTML = `<div style="text-align: center; padding-top: 100px;"><div class="loader"></div><p style="margin-top: 10px; color: var(--text-muted);">Running Gemini Evaluator Pipeline...</p></div>`;
+
+      try {
+        const res = await fetch('/api/evaluate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ company, role, jd })
+        });
+        const result = await res.json();
+        
+        if (result.error) {
+          throw new Error(result.error);
+        }
+
+        container.innerHTML = `
+          <div class="alert alert-success">Evaluation complete! Match Score: <strong>${result.score}/5</strong></div>
+          <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--text-main);">${company} — ${role}</h3>
+          <div class="report-view">${mdToHtml(result.reportContent)}</div>
+        `;
+      } catch (err) {
+        container.innerHTML = `<div style="color: var(--danger); padding: 20px;">Evaluation failed: ${err.message}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Run Evaluation</span>`;
+      }
+    }
+
+    // Start CV tailoring
+    async function startTailor() {
+      const source = document.getElementById('tailor-jd-source').value;
+      const jd = document.getElementById('tailor-jd').value.trim();
+      const extraDetails = document.getElementById('tailor-extra-details').value.trim();
+      const btn = document.getElementById('btn-tailor');
+      
+      if (source === 'new' && !jd) {
+        alert('Please paste the target job description to tailor your resume.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<div class="loader"></div> <span>Compiling...</span>`;
+      
+      const container = document.getElementById('tailor-result-container');
+      container.innerHTML = `<div style="text-align: center; padding-top: 100px;"><div class="loader"></div><p style="margin-top: 10px; color: var(--text-muted);">Optimizing layout and compiling to PDF...</p></div>`;
+
+      try {
+        const res = await fetch('/api/tailor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ source, jd, extraDetails })
+        });
+        const result = await res.json();
+        
+        if (result.error) {
+          throw new Error(result.error);
+        }
+
+        container.innerHTML = `
+          <div style="padding: 20px 0;">
+            <div class="logo-glow" style="width: 48px; height: 48px; margin: 0 auto 20px auto; background: var(--success); box-shadow: 0 0 15px var(--success);"></div>
+            <h3 style="color: var(--text-main); font-size: 16px; margin-bottom: 8px;">Resume Tailored Successfully!</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Generated single-page ATS-optimized PDF (${result.size})</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; max-width: 250px; margin: 0 auto;">
+              <a href="/api/download-pdf" class="btn btn-accent" style="justify-content: center; text-decoration: none;">Download PDF Resume</a>
+              <a href="/api/download-html" target="_blank" class="btn btn-secondary" style="justify-content: center; text-decoration: none;">Preview HTML</a>
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = `<div style="color: var(--danger); padding: 20px;">Tailoring failed: ${err.message}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Generate Tailored Resume PDF</span>`;
+      }
+    }
+
+    // Load CV text
+    async function loadCv() {
+      const text = document.getElementById('cv-editor');
+      text.value = 'Loading cv.md...';
+      try {
+        const res = await fetch('/api/cv');
+        const data = await res.json();
+        text.value = data.content;
+      } catch (err) {
+        text.value = `Error loading cv.md: ${err.message}`;
+      }
+    }
+
+    // Save CV text
+    async function saveCv() {
+      const content = document.getElementById('cv-editor').value;
+      try {
+        const res = await fetch('/api/cv', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('cv.md saved successfully!');
+        } else {
+          alert(`Save failed: ${data.error}`);
+        }
+      } catch (err) {
+        alert(`Error saving cv.md: ${err.message}`);
+      }
+    }
+
+    // Simple regex Markdown-to-HTML parser for report display
+    function mdToHtml(md) {
+      if (!md) return '';
+      
+      let html = md;
+      
+      // Clean tags
+      html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      // Headers
+      html = html.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
+      html = html.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
+      
+      // Lists (make sure lists are wrapped in <ul>)
+      html = html.replace(/^\s*[\-\*]\s+(.+)$/gm, '<li>$1</li>');
+      
+      // Strong / Em
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      
+      // Table formatting
+      const lines = html.split('\n');
+      let inTable = false;
+      let tableHtml = '';
+      
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i].trim();
+        if (line.startsWith('|')) {
+          if (!inTable) {
+            inTable = true;
+            tableHtml = '<table>';
+          }
+          
+          // Skip header separators like |---|---|
+          if (line.includes('---')) continue;
+          
+          const cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+          tableHtml += '<tr>';
+          cells.forEach(c => {
+            tableHtml += `<td>${c}</td>`;
+          });
+          tableHtml += '</tr>';
+          lines[i] = ''; // remove line
+        } else {
+          if (inTable) {
+            inTable = false;
+            tableHtml += '</table>';
+            lines[i] = tableHtml + '\n' + lines[i];
+          }
+        }
+      }
+      
+      html = lines.filter(l => l !== '').join('\n');
+      
+      // Formatting line endings to line breaks
+      html = html.split('\n').join('<br>');
+      return html;
+    }
+
+    // --- COLD OUTREACH CLIENT LOGIC ---
+    let currentOutreachJob = null;
+    let outreachJobs = [];
+
+    async function loadOutreachList() {
+      const body = document.getElementById('outreach-body');
+      body.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Refreshing outreach queue...</td></tr>`;
+      
+      const showAll = document.getElementById('show-all-scores').checked;
+      try {
+        const res = await fetch(`/api/outreach/list?all=${showAll}`);
+        const data = await res.json();
+        
+        if (data.length === 0) {
+          body.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No evaluated jobs found.</td></tr>`;
+          return;
+        }
+
+        outreachJobs = data;
+        body.innerHTML = '';
+        data.forEach(app => {
+          let statusBadgeClass = 'badge badge-status';
+          if (app.outreachStatus === 'Sent') statusBadgeClass += ' applied';
+          else if (app.outreachStatus === 'Drafted') statusBadgeClass += ' evaluated';
+          else if (app.outreachStatus === 'Lead Found') statusBadgeClass += ' evaluated';
+
+          body.innerHTML += `
+            <tr>
+              <td><strong>${app.company}</strong></td>
+              <td>${app.role}</td>
+              <td><span class="badge badge-score">${app.score}</span></td>
+              <td><span class="${statusBadgeClass}">${app.outreachStatus}</span></td>
+              <td>
+                <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 11.5px;" onclick="selectOutreachJobByNum(${app.num})">
+                  Manage Outreach
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      } catch (err) {
+        body.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger);">Error loading outreach queue: ${err.message}</td></tr>`;
+      }
+    }
+
+    function selectOutreachJobByNum(num) {
+      const app = outreachJobs.find(x => x.num === num);
+      if (app) {
+        selectOutreachJob(app);
+      }
+    }
+
+    function selectOutreachJob(app) {
+      currentOutreachJob = app;
+
+      document.getElementById('outreach-workspace').style.display = 'block';
+      document.getElementById('work-company').textContent = app.company;
+      document.getElementById('work-company-linkedin').value = app.companyLinkedin || '';
+
+      const leadSelectGroup = document.getElementById('lead-select-group');
+      const leadSelect = document.getElementById('work-lead-select');
+
+      if (app.leads && app.leads.length > 0) {
+        leadSelectGroup.style.display = 'block';
+        leadSelect.innerHTML = '';
+        app.leads.forEach((l, idx) => {
+          const statusText = l.status || 'Ready';
+          leadSelect.innerHTML += `<option value="${idx}">${l.lead.name} (${l.lead.title}) [${statusText}]</option>`;
+        });
+        
+        // Select first lead as active by default
+        changeActiveLead(0);
+      } else {
+        leadSelectGroup.style.display = 'none';
+        
+        // Legacy single lead fallback
+        populateLeadWorkspaceFields(app.lead, app.bestEmail, app.emails, app.draft);
+      }
+    }
+
+    function changeActiveLead(explicitIdx) {
+      if (!currentOutreachJob || !currentOutreachJob.leads) return;
+      
+      const select = document.getElementById('work-lead-select');
+      const idx = explicitIdx !== undefined ? explicitIdx : parseInt(select.value);
+      if (explicitIdx !== undefined) {
+        select.value = idx;
+      }
+      
+      const lItem = currentOutreachJob.leads[idx];
+      if (lItem) {
+        populateLeadWorkspaceFields(lItem.lead, lItem.bestEmail, lItem.emails, lItem.draft);
+      }
+    }
+
+    function populateLeadWorkspaceFields(lead, bestEmail, emails, draft) {
+      document.getElementById('work-lead-name').value = lead ? lead.name : '';
+      document.getElementById('work-lead-title').value = lead ? lead.title : '';
+      document.getElementById('work-lead-linkedin').value = lead ? lead.linkedin : '';
+      document.getElementById('work-lead-email').value = bestEmail || '';
+
+      // Populate pattern dropdown
+      const select = document.getElementById('work-email-patterns');
+      select.innerHTML = '<option value="">Pattern Candidates...</option>';
+      
+      if (emails && emails.length > 0) {
+        emails.forEach(c => {
+          select.innerHTML += `<option value="${c.email}" data-mx="${c.mxStatus}">${c.pattern} (${c.confidence}%)</option>`;
+        });
+        document.getElementById('work-mx-status').textContent = emails[0].mxStatus;
+        document.getElementById('work-mx-status').style.color = emails[0].mxStatus.includes('Verified') ? 'var(--success)' : 'var(--warning)';
+      } else {
+        document.getElementById('work-mx-status').textContent = '';
+      }
+
+      // Populate email draft if available
+      const editor = document.getElementById('outreach-email-editor');
+      if (draft) {
+        document.getElementById('work-email-subject').value = draft.subject;
+        document.getElementById('work-email-body').value = draft.body;
+        editor.style.display = 'block';
+      } else {
+        document.getElementById('work-email-subject').value = '';
+        document.getElementById('work-email-body').value = '';
+        editor.style.display = 'none';
+      }
+    }
+
+    function startManualOutreach() {
+      currentOutreachJob = {
+        num: Date.now(),
+        isManual: true,
+        company: '',
+        role: '',
+        reportUrl: '',
+        leads: []
+      };
+
+      document.getElementById('outreach-workspace').style.display = 'block';
+      document.getElementById('work-company').textContent = 'Manual Custom';
+      
+      // Show manual fields and hide leads dropdown initially
+      document.getElementById('manual-outreach-fields').style.display = 'block';
+      document.getElementById('lead-select-group').style.display = 'none';
+
+      // Reset manual fields
+      document.getElementById('work-manual-company').value = '';
+      document.getElementById('work-manual-role').value = '';
+      document.getElementById('work-manual-jd').value = '';
+      document.getElementById('work-company-linkedin').value = '';
+
+      // Clear decision maker fields
+      populateLeadWorkspaceFields(null, '', [], null);
+    }
+
+    function useSelectedPattern() {
+      const select = document.getElementById('work-email-patterns');
+      const email = select.value;
+      if (!email) return;
+
+      document.getElementById('work-lead-email').value = email;
+      
+      const opt = select.options[select.selectedIndex];
+      const mx = opt.getAttribute('data-mx');
+      document.getElementById('work-mx-status').textContent = mx;
+      document.getElementById('work-mx-status').style.color = mx.includes('Verified') ? 'var(--success)' : 'var(--warning)';
+    }
+
+    async function findLeadForCurrentJob() {
+      if (!currentOutreachJob) return;
+      
+      let company = currentOutreachJob.company;
+      let reportUrl = currentOutreachJob.reportUrl;
+      
+      if (currentOutreachJob.isManual) {
+        company = document.getElementById('work-manual-company').value.trim();
+        if (!company) {
+          alert('Please enter a Company Name first.');
+          return;
+        }
+        currentOutreachJob.company = company;
+      }
+
+      const btn = document.getElementById('btn-find-lead');
+      btn.disabled = true;
+      btn.innerHTML = `<div class="loader"></div> <span>Finding...</span>`;
+
+      const companyLinkedin = document.getElementById('work-company-linkedin').value.trim();
+
+      try {
+        const res = await fetch('/api/outreach/find-lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            num: currentOutreachJob.num,
+            company: company,
+            reportUrl: reportUrl,
+            companyLinkedin: companyLinkedin
+          })
+        });
+        const result = await res.json();
+        
+        if (result.item) {
+          // Re-populate workspace with found details, keeping original tracker fields like reportUrl and role
+          const merged = { ...currentOutreachJob, ...result.item };
+          selectOutreachJob(merged);
+          
+          if (currentOutreachJob.isManual) {
+            document.getElementById('manual-outreach-fields').style.display = 'block';
+            document.getElementById('work-company').textContent = `Manual Custom (${company})`;
+          }
+          
+          loadOutreachList();
+          if (!result.success) {
+            alert(`Notice: Lead search processed but returned a warning: ${result.error}`);
+          }
+        } else {
+          throw new Error(result.error || 'Unknown error occurred.');
+        }
+      } catch (err) {
+        alert(`Lead search failed: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Find Lead via LinkedIn';
+      }
+    }
+
+    async function draftEmailForCurrentJob() {
+      if (!currentOutreachJob) return;
+      
+      const name = document.getElementById('work-lead-name').value.trim();
+      const title = document.getElementById('work-lead-title').value.trim();
+      const email = document.getElementById('work-lead-email').value.trim();
+
+      if (!name || !title || !email) {
+        alert('Please ensure Name, Title, and Email address are populated first.');
+        return;
+      }
+
+      let jdText = '';
+      if (currentOutreachJob.isManual) {
+        jdText = document.getElementById('work-manual-jd').value.trim();
+        if (!jdText) {
+          alert('Please enter a Job Description first.');
+          return;
+        }
+      }
+
+      const btn = document.getElementById('btn-draft-email');
+      btn.disabled = true;
+      btn.innerHTML = `<div class="loader"></div> <span>Drafting...</span>`;
+
+      try {
+        const res = await fetch('/api/outreach/draft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            num: currentOutreachJob.num,
+            company: currentOutreachJob.company,
+            leadName: name,
+            leadTitle: title,
+            reportUrl: currentOutreachJob.reportUrl,
+            jdText: jdText
+          })
+        });
+        const result = await res.json();
+        
+        if (result.success && result.draft) {
+          document.getElementById('work-email-subject').value = result.draft.subject;
+          document.getElementById('work-email-body').value = result.draft.body;
+          document.getElementById('outreach-email-editor').style.display = 'block';
+          
+          const select = document.getElementById('work-lead-select');
+          if (select && select.value !== '') {
+            const idx = parseInt(select.value);
+            if (currentOutreachJob.leads && currentOutreachJob.leads[idx]) {
+              currentOutreachJob.leads[idx].draft = result.draft;
+              currentOutreachJob.leads[idx].status = 'Drafted';
+              const opt = select.options[select.selectedIndex];
+              opt.textContent = `${name} (${title}) [Drafted]`;
+            }
+          }
+          
+          loadOutreachList();
+        } else {
+          throw new Error(result.error || 'Failed to draft email.');
+        }
+      } catch (err) {
+        alert(`Drafting failed: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Draft Personalised Email';
+      }
+    }
+
+    async function sendOutreachEmail() {
+      if (!currentOutreachJob) return;
+
+      const to = document.getElementById('work-lead-email').value.trim();
+      const subject = document.getElementById('work-email-subject').value.trim();
+      const body = document.getElementById('work-email-body').value.trim();
+
+      if (!to || !subject || !body) {
+        alert('Please fill in Recipient Email, Subject, and Body before sending.');
+        return;
+      }
+
+      const btn = document.getElementById('btn-send-email');
+      btn.disabled = true;
+      btn.innerHTML = `<div class="loader"></div> <span>Delivering...</span>`;
+
+      try {
+        const res = await fetch('/api/outreach/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            num: currentOutreachJob.num,
+            to,
+            subject,
+            body
+          })
+        });
+        const result = await res.json();
+        
+        if (result.success) {
+          alert(`Email sent successfully to ${to}! Application status updated to Applied.`);
+          
+          const select = document.getElementById('work-lead-select');
+          if (select && select.value !== '') {
+            const idx = parseInt(select.value);
+            if (currentOutreachJob.leads && currentOutreachJob.leads[idx]) {
+              currentOutreachJob.leads[idx].status = 'Sent';
+              const opt = select.options[select.selectedIndex];
+              const name = document.getElementById('work-lead-name').value;
+              const title = document.getElementById('work-lead-title').value;
+              opt.textContent = `${name} (${title}) [Sent]`;
+            }
+          }
+          
+          // Clear editor and refresh queue table
+          document.getElementById('outreach-email-editor').style.display = 'none';
+          loadOutreachList();
+        } else {
+          throw new Error(result.error || 'SMTP delivery failed.');
+        }
+      } catch (err) {
+        alert(`Sending failed: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Send Email via Gmail';
+      }
+    }
+
+    // On page load
+    window.onload = function() {
+      loadApplications();
+    };
+  </script>
+</body>
+</html>
